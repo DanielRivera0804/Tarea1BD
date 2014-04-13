@@ -6,54 +6,48 @@ import java.net.Socket;
 
 public class ServidorHTTP
 {
+		int puerto = 90;
 	
-	int puerto = 90;
-	
-	final int ERROR = 0;
-	final int WARNING = 1;
-	final int DEBUG = 2;
-	
-	
-	public static void main(String[] array)
-	{
-		ServidorHTTP instancia = new ServidorHTTP(array);
-		instancia.arranca();
-	}
-	
-	ServidorHTTP(String[] param)
-	{
-		procesaParametros();
-	}
-	
-	boolean procesaParametros(){
-		
-		return true;
-	}
-	
-	boolean arranca(){
-		
-		System.out.println("Arrancamos nuestro servidor");
-		try
+		public static void main(String[] array)
 		{
-				ServerSocket s = new ServerSocket(90);
-				System.out.println("Quedamos a la espera de conexion");
-						
-				while(true)
-				{ // Bucle Infinito
+				ServidorHTTP instancia = new ServidorHTTP(array);
+				instancia.arranca();
+		}
+	
+		ServidorHTTP(String[] param)
+		{
+				procesaParametros();
+		}
+	
+		boolean procesaParametros()
+		{		
+				return true;
+		}
+	
+		boolean arranca(){
+		
+				System.out.println("[Arrancamos nuestro servidor]");
+		
+				try
+				{
+					ServerSocket s = new ServerSocket(90);
+					System.out.println("[Quedamos a la espera de conexion]");					
+				
+				while(true)// Bucle Infinito
+				{ 
 						Socket entrante = s.accept();		
 						peticionWeb pCliente = new peticionWeb(entrante);
 						pCliente.start();
 				}				
-		}
-		catch(Exception e)
-		{
-			System.out.println("Error en servidor\n" + e.toString());
-		}
-			return true;
-		}
 		
-	}
-	
+				}
+				catch(Exception e)
+				{
+						System.out.println("Error en servidor\n" + e.toString());
+				}
+				return true;
+			}	
+		}
 	
 	
 	

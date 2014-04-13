@@ -28,7 +28,7 @@ class peticionWeb extends Thread
 		System.out.println(currentThread().toString() + " - " + mensaje);
 	}
 
-	private Socket scliente 	= null;		// Representa la petición de nuestro cliente
+	private Socket scliente 	= null;		// Representa la peticion de nuestro cliente
    	private PrintWriter out 	= null;		// Representa el buffer donde escribimos la respuesta
 
    	peticionWeb(Socket ps)
@@ -48,11 +48,10 @@ class peticionWeb extends Thread
 			
 			String cadena = "default";
 			int i = 0;
-			
-			
+						
 			while(cadena != null && cadena.length() != 0)
 			{
-				//SE LEE UNA LINEA DE CADENA
+				//SE LEE UNA LINEA DE CADENA POR CADA ITERACION
 				cadena = in.readLine();
 				System.out.println("-- " + cadena);
 				
@@ -66,12 +65,11 @@ class peticionWeb extends Thread
 					{
 						String method = st.nextToken();
 						
-						if( method.equals("GET"))
+						if( method.equals("GET")) // Si el request corresponde a un GET, se retorna el fichero solicitado
 						{
-							retornaFichero(st.nextToken());
-							
+							retornaFichero(st.nextToken());				
 						}
-						else if(method.equals("POST"))
+						else if(method.equals("POST")) //Si el request corresponde a un POST, se guardan en Contactos.txt los datos del usuario
 						{
 							procesarPost(in,st.nextToken());
 							break;
@@ -80,29 +78,38 @@ class peticionWeb extends Thread
 						{
 							System.out.println("[400 Peticion Incorrecta]");
 						}
-
 					}
 				}
-			}
-			
+			}			
 		}
 		catch(Exception e)
 		{
 			System.out.println("Error en servidor\n" + e.toString());
 		}
 	}
+	
+//---------------------------------------------
+//FUNCIONES AUXILIARES
+//--------------------------------------------
 
 	//Funcion que nos otorga recuperar el
 	//Archivo solicitado por GET
-	void retornaFichero(String sfichero)
+	void retornaFichero(String sfichero) throws IOException
 	{
 
-		// comprobamos si tiene una barra al principio
+		// En caso de ser archivo favicon.ico, no se realiza nada y se hace unreturn
 		if(sfichero.equals("/favicon.ico") )
 			return;
 		
 		depura("Recuperamos el fichero " + sfichero);
-		
+			
+		//Si se solicita entrar a VistaConctactos.html
+		//Se actualiza con la lista de los usuarioss
+		if( sfichero.equals("/VistaContactos.html"))
+		{
+			modificarVistaContactos(sfichero);
+		}
+				
 		if (sfichero.startsWith("/"))
 		{
 			sfichero = sfichero.substring(1) ;
@@ -163,6 +170,44 @@ class peticionWeb extends Thread
 		}
 	}
 	
+	//----------
+	//Se actualiza VistaContactos.html
+	//------------
+	void modificarVistaContactos(String sfichero) throws IOException {
+			
+		File f = new File("VistaContactos.html");
+		File g = new File("Contactos.txt");
+		
+		if( f.exists())
+		{;
+			FileReader fr = new FileReader (g);
+			BufferedReader br = new BufferedReader(fr);
+			String cadena ="default";
+				
+			FileWriter w = new FileWriter(f);
+			BufferedWriter bw = new BufferedWriter(w);
+			PrintWriter wr = new PrintWriter(bw);
+			
+			wr.append("<h1>Vista Contactossss </h1>");
+			
+			while( cadena != null)
+			{
+				cadena = br.readLine();
+				if( cadena != null){
+					String[] s = cadena.split(",");
+					wr.append("<h2>" + s[0] + "</h2>");
+					wr.append("<h4>" + s[1] + "</h4>");
+					wr.append("<h4>" + s[2] + "</h4>\n");
+				}
+			}
+			
+			wr.close();
+			bw.close();
+			br.close();
+			fr.close();		
+		}	
+	}
+
 	void procesarPost(BufferedReader in,String sfichero) throws IOException
 	{
 		String cadena = "default";
@@ -197,14 +242,13 @@ class peticionWeb extends Thread
 		guardarContacto(query);// El query se guarda en Contactos.txt con la funcion guardarcontacto
 		retornaFichero(sfichero); // Se retorna a la pagina 
 	}
-	
-	
-	
+
 	//Esta funcion guarda los datos en Contactos.txt
 	//Cada linea representa un usuario
 	void guardarContacto(String query) throws IOException
 	{
 		File f = new File("Contactos.txt");
+		System.out.println("QUERY:"+ query);
 		
 		if(f.exists()) //Si el archivo con los contactos existen
 		{
@@ -225,4 +269,3 @@ class peticionWeb extends Thread
 		
 	}
 }
-

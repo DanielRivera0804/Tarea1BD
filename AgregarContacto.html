@@ -1,7 +1,34 @@
-<form action ="AgregarContacto.html" method="post">
-	<h2> Agregar Contacto </h2>
-  Nombre: <input type="text" name="fname"><br>
-  Direccion IP: <input type="text" name="lname"><br>
-  Puerto: <input type="text" name="lname"><br>
-  <input type="submit" value="Submit">
-</form>
+<html>
+    <head>
+        <title>Avioncito de Papel</title>
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <meta charset="UTF-8">
+        <style type="text/css" media="screen">
+            body {
+                margin: 10px;
+            }
+            .form-control {
+                width: 200px;
+            }
+        </style>
+    </head>
+    <body>
+    <form class="form-horizontal" action ="AgregarContactos.html" method="post">
+
+        <!-- Nombre del form -->
+        <legend>Avioncito de Papel</legend>
+        <h3>Agregar Contacto</h3>
+        <strong>Nombre:</strong>
+        <input name="fname" type="text" placeholder="Nombre de usuario" class="form-control"><br>
+
+        <strong>Direccion IP:</strong>
+        <input name="lname" type="text" placeholder="IP usuario" class="form-control"><br>
+        
+        <strong>Puerto:</strong>
+        <input name="lname" type="text" placeholder="Puerto del usuario" class="form-control"><br>
+        
+        <strong>Subir Informacion</strong><br>
+        <button id="singlebutton" type="submit" value="Submit" class="btn btn-primary">SUBIR!</button>
+    </form>
+    </body>
+</html>

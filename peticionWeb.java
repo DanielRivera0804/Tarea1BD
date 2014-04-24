@@ -188,7 +188,7 @@ class peticionWeb extends Thread
 			BufferedWriter bw = new BufferedWriter(w);
 			PrintWriter wr = new PrintWriter(bw);
 			
-			wr.append("<h1>Vista Contactossss </h1>");
+			wr.append("<h1>Vista Contacto </h1>");
 			
 			while( cadena != null)
 			{

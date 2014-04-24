@@ -261,6 +261,9 @@ class peticionWeb extends Thread
 			String ip = s[1].substring(s[1].indexOf("=") + 1,s[1].length());
 			String puerto = s[2].substring(s[2].indexOf("=") + 1,s[2].length());
 			
+			//eliminar el + que se guarda
+			usuario = usuario.replace('+',' ');
+			
 			wr.append(usuario + "," + ip + ","+ puerto + "\n");
 			wr.close();
 			bw.close();

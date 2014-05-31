@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.StringTokenizer;
 
@@ -17,6 +19,7 @@ class peticionWeb extends Thread
 	final int ERROR = 0;
 	final int WARNING = 1;
 	final int DEBUG = 2;
+	
 
 	void depura(String mensaje)
 	{
@@ -69,7 +72,7 @@ class peticionWeb extends Thread
 						{
 							retornaFichero(st.nextToken());				
 						}
-						else if(method.equals("POST")) //Si el request corresponde a un POST, se guardan en Contactos.txt los datos del usuario
+						else if(method.equals("POST")  ) //Si el request corresponde a un POST, se guardan en Contactos.txt los datos del usuario
 						{
 							procesarPost(in,st.nextToken());
 							break;
@@ -94,9 +97,12 @@ class peticionWeb extends Thread
 
 	//Funcion que nos otorga recuperar el
 	//Archivo solicitado por GET
-	void retornaFichero(String sfichero) throws IOException
+	void retornaFichero(String sfichero) throws Exception
 	{
-
+		//Si el Metodo GET proviene de InterfazChat.html , se actualiza el historial del chat
+		System.out.println(sfichero);
+		if(sfichero.equals("/InterfazChat.html"))	
+			modificarInterfazChat();
 		// En caso de ser archivo favicon.ico, no se realiza nada y se hace unreturn
 		if(sfichero.equals("/favicon.ico") )
 			return;
@@ -170,6 +176,14 @@ class peticionWeb extends Thread
 		}
 	}
 	
+	private void modificarInterfazChat() throws Exception {
+		InetAddress host = InetAddress.getLocalHost();
+		String IP = host.getHostAddress();
+		TCPClient.clienteEnviaTCP(IP,"actualizar");
+		
+	
+}
+
 	//----------
 	//Se actualiza VistaContactos.html
 	//------------
@@ -208,7 +222,7 @@ class peticionWeb extends Thread
 		}	
 	}
 
-	void procesarPost(BufferedReader in,String sfichero) throws IOException
+	void procesarPost(BufferedReader in,String sfichero) throws Exception
 	{
 		String cadena = "default";
 		int length = 0; //Aca se guarda el largo de caracteres que contiene el POST
@@ -238,9 +252,29 @@ class peticionWeb extends Thread
 			query = query.concat(Character.toString((char)in.read()));
 			j--;
 		}
-	
+		
+		//Si el POST fue realizado desde InterfazChat.html, entonces se envia al servidor TCP
+		if( sfichero.equals("/InterfazChat.html")){
+			enviarHaciaServidorTCP(query);
+			
+		}else{
+		
 		guardarContacto(query);// El query se guarda en Contactos.txt con la funcion guardarcontacto
 		retornaFichero(sfichero); // Se retorna a la pagina 
+		}
+	}
+
+	private void enviarHaciaServidorTCP(String query) throws Exception {
+		
+		InetAddress host = InetAddress.getLocalHost();
+		String IP = host.getHostAddress();
+		
+		
+		query = query.concat("+" + IP);
+		
+		TCPClient.clienteEnviaTCP(query,"enviar");
+		retornaFichero("/InterfazChat.html");
+		
 	}
 
 	//Esta funcion guarda los datos en Contactos.txt

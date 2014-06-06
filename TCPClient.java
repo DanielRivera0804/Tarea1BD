@@ -4,6 +4,9 @@ import java.net.*;
 
 public class TCPClient {
 	
+	
+	
+	
 	 static void clienteEnviaTCP(String mensaje,String flag) throws Exception
 	{
 		String sentence;
@@ -15,6 +18,8 @@ public class TCPClient {
 		DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
 		BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 		sentence = mensaje.concat(":" + flag);
+		if(sentence.substring(0, 4).equals("file"))
+			enviarArchivoAServidorTCP(sentence.substring(5));
 		outToServer.writeBytes(sentence + '\n');
 		modifiedSentence = inFromServer.readLine();
 		System.out.println("FROM SERVER: " + modifiedSentence);
@@ -28,9 +33,44 @@ public class TCPClient {
 		clientSocket.close();
 	}
 	 
-	 private static void actualizarHTML(String string) throws IOException {
+	 private static void enviarArchivoAServidorTCP(String sentence) {
+		 
+		String[] banana = sentence.split("\\+");
+		String path = banana[0];
+		
+		DataInputStream input;
+		 BufferedInputStream bis;
+		 BufferedOutputStream bos;
+		 int in;
+		 byte[] byteArray;
+		 //Fichero a transferir
+		 final String filename = "C:\\log.txt";
+		 
+		try{
+		 final File localFile = new File( filename );
+		 InetAddress ip = InetAddress.getByName("192.168.0.4");
+		 Socket client = new Socket(ip,6788);
+		 bis = new BufferedInputStream(new FileInputStream(localFile));
+		 bos = new BufferedOutputStream(client.getOutputStream());
+		 //Enviamos el nombre del fichero
+		 DataOutputStream dos=new DataOutputStream(client.getOutputStream());
+		 dos.writeUTF(localFile.getName());
+		 //Enviamos el fichero
+		 byteArray = new byte[8192];
+		 while ((in = bis.read(byteArray)) != -1){
+		 bos.write(byteArray,0,in);
+		 }
+		 
+		bis.close();
+		 bos.close();
+		 
+		}catch ( Exception e ) {
+		 System.err.println(e);
+		 }
+	}
+
+	private static void actualizarHTML(String string) throws IOException {
 			System.out.println("ACTUALIZAR HTML");
-			System.out.println("STRING:"+ string);
 					
 			File f = new File("InterfazChat.html");
 			
@@ -78,6 +118,13 @@ public class TCPClient {
 				wr.append("<button id=\"singlebutton\" type=\"submit\" value=\"Submit\" class=\"btn btn-primary\">SUBIR!</button>\n");
 				wr.append("</form>\n");
 			    
+				wr.append("<form class=\"form-horizontal\" action =\"InterfazChat.html\" method=\"post\">\n");
+				wr.append("<strong>File Path:</strong>");
+				wr.append("<input name=\"file\" type=\"text\" style=\"width: 900px\" placeholder=\"Mensaje\" class=\"form-control\"><br>");
+				wr.append("<strong>Enviar</strong><br>");
+				wr.append("<button id=\"singlebutton\" type=\"submit\" value=\"Submit\" class=\"btn btn-primary\">SUBIR ARCHIVO</button>" );
+				wr.append("</form>");
+				
 				for(int x = 0; x <= cantidad - 1; x++)
 				{
 					String[] ArrayMensaje = ArrayHistorial[x].split("!");

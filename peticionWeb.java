@@ -181,7 +181,6 @@ class peticionWeb extends Thread
 		String IP = host.getHostAddress();
 		TCPClient.clienteEnviaTCP(IP,"actualizar");
 		
-	
 }
 
 	//----------
@@ -269,7 +268,6 @@ class peticionWeb extends Thread
 		InetAddress host = InetAddress.getLocalHost();
 		String IP = host.getHostAddress();
 		
-		
 		query = query.concat("+" + IP);
 		
 		TCPClient.clienteEnviaTCP(query,"enviar");
@@ -282,7 +280,6 @@ class peticionWeb extends Thread
 	void guardarContacto(String query) throws IOException
 	{
 		File f = new File("Contactos.txt");
-		System.out.println("QUERY:"+ query);
 		
 		if(f.exists()) //Si el archivo con los contactos existen
 		{

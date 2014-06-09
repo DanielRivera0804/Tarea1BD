@@ -38,13 +38,18 @@ public class TCPClient {
 		String[] banana = sentence.split("\\+");
 		String path = banana[0];
 		
+		path = path.replace("%3A",":");
+		path = path.replace("%5C","\\");
+		
+		System.out.println("THE FUCKING PATH" + path);
+		
 		DataInputStream input;
 		 BufferedInputStream bis;
 		 BufferedOutputStream bos;
 		 int in;
 		 byte[] byteArray;
 		 //Fichero a transferir
-		 final String filename = "C:\\log.txt";
+		 final String filename = path;
 		 
 		try{
 		 final File localFile = new File( filename );
@@ -98,7 +103,7 @@ public class TCPClient {
 				wr.append("<head>\n");
 				wr.append("<title>Avioncito de Papel</title>\n");
 				wr.append("<link href=\"css/bootstrap.min.css\" rel=\"stylesheet\">\n");
-				wr.append("<meta charset=\"UTF-8\">");
+				wr.append("<meta  http-equiv=\"refresh\" content=\"10\" charset=\"UTF-8\"><style type=\"text/css\" media=\"screen\">\">");
 				wr.append("<style type=\"text/css\" media=\"screen\">\n");
 				wr.append("body {\n");
 				wr.append("margin: 10px;\n");
